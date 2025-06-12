@@ -8,6 +8,7 @@ builder.Services.Configure<Shiftly.Data.MongoDbSettings>(
 builder.Services.AddSingleton<Shiftly.Data.MongoDbContext>();
 
 // === REPOZYTORIA I SERWISY ===
+builder.Services.AddScoped<SwapRequestRepository>();
 builder.Services.AddScoped<LeaveRequestRepository>();
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<ShiftRepository>();
