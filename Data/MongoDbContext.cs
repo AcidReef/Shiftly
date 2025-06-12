@@ -22,6 +22,7 @@ namespace Shiftly.Data
 
         public IMongoCollection<Shift> Shifts => _db.GetCollection<Shift>("shifts");
         public IMongoCollection<User> Users => _db.GetCollection<User>("users");
+        public IMongoCollection<LeaveRequest> LeaveRequests => _db.GetCollection<LeaveRequest>("leaverequests");
         // Dodasz więcej kolekcji, np. Users, LeaveRequests itd.
     }
 }

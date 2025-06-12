@@ -2,23 +2,24 @@ using Shiftly.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// === 1. KONFIGURACJA MONGODB ===
+// === KONFIGURACJA MONGODB ===
 builder.Services.Configure<Shiftly.Data.MongoDbSettings>(
     builder.Configuration.GetSection("MongoDb"));
 builder.Services.AddSingleton<Shiftly.Data.MongoDbContext>();
 
-// === 2. REPOZYTORIA I SERWISY (dodawać tu młotki!!) ===
+// === REPOZYTORIA I SERWISY ===
+builder.Services.AddScoped<LeaveRequestRepository>();
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<ShiftRepository>();
 
-// === 3. SWAGGER I ENDPOINTY ===
+// === SWAGGER I ENDPOINTY ===
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// === 4. MIDDLEWARE ===
+// === MIDDLEWARE ===
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -27,9 +28,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// === 5. MAPOWANIE KONTROLERÓW ===
+// === MAPOWANIE KONTROLERÓW ===
 app.MapControllers();
-
-// (możesz usunąć domyślny endpoint pogodowy, jeśli go nie potrzebujesz)
 
 app.Run();

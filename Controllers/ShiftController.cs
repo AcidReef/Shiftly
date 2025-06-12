@@ -10,14 +10,11 @@ namespace Shiftly.Controllers
     {
         private readonly ShiftRepository _repo;
 
-        public ShiftController(ShiftRepository repo)
-        {
-            _repo = repo;
-        }
+        public ShiftController(ShiftRepository repo) => _repo = repo;
 
         [HttpGet]
-        public async Task<IActionResult> GetAll() =>
-            Ok(await _repo.GetAllAsync());
+        public async Task<IActionResult> GetAll()
+            => Ok(await _repo.GetAllAsync());
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(string id)
@@ -31,6 +28,20 @@ namespace Shiftly.Controllers
         {
             await _repo.CreateAsync(shift);
             return CreatedAtAction(nameof(GetById), new { id = shift.Id }, shift);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(string id, Shift shift)
+        {
+            await _repo.UpdateAsync(id, shift);
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            await _repo.DeleteAsync(id);
+            return NoContent();
         }
     }
 }
