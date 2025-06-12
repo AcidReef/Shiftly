@@ -19,6 +19,7 @@ node_modules/
 # Assembly
 Shiftly.AssemblyInfo.cs
 Shiftly.AssemblyInfoInputs.cache
+obj/
 
 ### ### ### ###
 
