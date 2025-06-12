@@ -1,3 +1,5 @@
+using Shiftly.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // === 1. KONFIGURACJA MONGODB ===
@@ -6,6 +8,7 @@ builder.Services.Configure<Shiftly.Data.MongoDbSettings>(
 builder.Services.AddSingleton<Shiftly.Data.MongoDbContext>();
 
 // === 2. REPOZYTORIA I SERWISY (dodawać tu młotki!!) ===
+builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<Shiftly.Repositories.ShiftRepository>();
 
 // === 3. SWAGGER I ENDPOINTY ===
