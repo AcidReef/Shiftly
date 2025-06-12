@@ -7,9 +7,9 @@ namespace Shiftly.Models
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public required string Id { get; set; }
+        public string Id { get; set; } = default!;
 
-        public required string UserId { get; set; }
+        public string UserId { get; set; } = default!;
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
         public string? Note { get; set; }

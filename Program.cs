@@ -9,7 +9,7 @@ builder.Services.AddSingleton<Shiftly.Data.MongoDbContext>();
 
 // === 2. REPOZYTORIA I SERWISY (dodawać tu młotki!!) ===
 builder.Services.AddScoped<UserRepository>();
-builder.Services.AddScoped<Shiftly.Repositories.ShiftRepository>();
+builder.Services.AddScoped<ShiftRepository>();
 
 // === 3. SWAGGER I ENDPOINTY ===
 builder.Services.AddControllers();

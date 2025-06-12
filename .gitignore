@@ -16,6 +16,10 @@ launchSettings.json
 # Node
 node_modules/
 
+# Assembly
+Shiftly.AssemblyInfo.cs
+Shiftly.AssemblyInfoInputs.cache
+
 ### ### ### ###
 
 # dotenv files
