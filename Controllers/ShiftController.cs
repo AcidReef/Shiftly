@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Shiftly.Models;
 using Shiftly.Repositories;
+using Shiftly.Services;
 
 namespace Shiftly.Controllers
 {
@@ -8,9 +9,14 @@ namespace Shiftly.Controllers
     [Route("api/[controller]")]
     public class ShiftController : ControllerBase
     {
+        private readonly ShiftService _shiftService;
         private readonly ShiftRepository _repo;
 
-        public ShiftController(ShiftRepository repo) => _repo = repo;
+        public ShiftController(ShiftService shiftService, ShiftRepository repo)
+        {
+            _shiftService = shiftService;
+            _repo = repo;
+        }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
@@ -26,6 +32,10 @@ namespace Shiftly.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Shift shift)
         {
+            // Przykładowa logika biznesowa: walidacja dostępności usera
+            if (!await _shiftService.IsUserAvailable(shift.UserId, shift.Start, shift.End))
+                return BadRequest("User already has a shift at this time!");
+
             await _repo.CreateAsync(shift);
             return CreatedAtAction(nameof(GetById), new { id = shift.Id }, shift);
         }
