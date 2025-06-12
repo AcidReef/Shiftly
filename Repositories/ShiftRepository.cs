@@ -23,5 +23,10 @@ namespace Shiftly.Repositories
             await _context.Shifts.InsertOneAsync(shift);
 
         // Dodaj inne metody: Update, Delete
+        public Task UpdateAsync(string id, Shift shift) =>
+            _context.Shifts.ReplaceOneAsync(s => s.Id == id, shift);
+
+        public Task DeleteAsync(string id) =>
+            _context.Shifts.DeleteOneAsync(s => s.Id == id);
     }
 }
