@@ -43,5 +43,27 @@ namespace Shiftly.Controllers
             await _repo.DeleteAsync(id);
             return NoContent();
         }
+
+        [HttpPost("{id}/accept")]
+        public async Task<IActionResult> Accept(string id)
+        {
+            var swap = await _repo.GetByIdAsync(id);
+            if (swap is null) return NotFound();
+
+            swap.Status = "Accepted";
+            await _repo.UpdateAsync(id, swap);
+            return Ok(swap);
+        }
+
+        [HttpPost("{id}/reject")]
+        public async Task<IActionResult> Reject(string id)
+        {
+            var swap = await _repo.GetByIdAsync(id);
+            if (swap is null) return NotFound();
+
+            swap.Status = "Rejected";
+            await _repo.UpdateAsync(id, swap);
+            return Ok(swap);
+        }
     }
 }

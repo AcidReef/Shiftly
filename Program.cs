@@ -1,4 +1,5 @@
 using Shiftly.Repositories;
+using Shiftly.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,11 @@ builder.Services.Configure<Shiftly.Data.MongoDbSettings>(
 builder.Services.AddSingleton<Shiftly.Data.MongoDbContext>();
 
 // === REPOZYTORIA I SERWISY ===
+builder.Services.Configure<ServiceBusSettings>(builder.Configuration.GetSection("ServiceBus"));
+builder.Services.AddSingleton<NotificationService>();
+
+builder.Services.AddScoped<LeaveRequestService>();
+builder.Services.AddScoped<ShiftService>();
 builder.Services.AddScoped<SwapRequestRepository>();
 builder.Services.AddScoped<LeaveRequestRepository>();
 builder.Services.AddScoped<UserRepository>();
