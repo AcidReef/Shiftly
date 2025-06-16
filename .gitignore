@@ -5,6 +5,14 @@
 
 ### ### ### ###
 
+# Ignorowanie plików generowanych przez Visual Studio / .NET
+obj/
+bin/
+*.cache
+*.assets.json
+*.targets
+*.nuget.*
+
 # pliki konfiguracyjne środowiska (sekrety)
 appsettings.Development.json
 launchSettings.json
