@@ -58,6 +58,30 @@ public class AuthController : ControllerBase
         );
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
+
+    [HttpPost("register")]
+public async Task<IActionResult> Register([FromBody] RegisterDto dto)
+{
+    // Czy taki user już istnieje?
+    var exists = await _repo.GetByUserNameAsync(dto.UserName);
+    if (exists is not null)
+        return BadRequest("Username already exists");
+
+    // Hashuj hasło
+    var hash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+
+    var user = new User
+    {
+        UserName = dto.UserName,
+        Email = dto.Email,
+        PasswordHash = hash,
+        Role = dto.Role ?? "User"
+    };
+
+    await _repo.CreateAsync(user);
+
+    return Ok("User registered!");
+}
 }
 
 public class LoginDto

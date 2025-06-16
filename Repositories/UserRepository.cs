@@ -14,7 +14,7 @@ public class UserRepository
     public async Task<User?> GetByIdAsync(string id)
     { return await _ctx.Users.Find(u => u.Id == id).FirstOrDefaultAsync(); }
 
-    public Task CreateAsync(User user) => _ctx.Users.InsertOneAsync(user);
+    public async Task CreateAsync(User user) => await _ctx.Users.InsertOneAsync(user);
     public Task UpdateAsync(string id, User user) => _ctx.Users.ReplaceOneAsync(u => u.Id == id, user);
     public Task DeleteAsync(string id) => _ctx.Users.DeleteOneAsync(u => u.Id == id);
     public Task<User?> GetByUserNameAsync(string userName) => _ctx.Users.Find(u => u.UserName == userName).FirstOrDefaultAsync();
