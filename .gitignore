@@ -12,6 +12,8 @@ bin/
 *.assets.json
 *.targets
 *.nuget.*
+*.dgSpec.json
+*.editorconfig
 
 # pliki konfiguracyjne środowiska (sekrety)
 appsettings.Development.json
