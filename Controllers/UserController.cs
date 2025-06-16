@@ -18,6 +18,13 @@ public class UserController : ControllerBase
         return user is null ? NotFound() : Ok(user);
     }
 
+    [HttpGet("by-username/{userName}")]
+    public async Task<IActionResult> GetByUserName(string userName)
+    {
+        var user = await _repo.GetByUserNameAsync(userName);
+        return user is null ? NotFound() : Ok(user);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create(User user)
     {
