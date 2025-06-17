@@ -17,6 +17,9 @@ bin/
 
 # pliki konfiguracyjne środowiska (sekrety)
 appsettings.Development.json
+# appsettings.json
+appsettings.json
+
 launchSettings.json
 
 # Konfiguracje IDE
