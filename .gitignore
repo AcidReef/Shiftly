@@ -18,6 +18,8 @@ bin/
 # pliki konfiguracyjne środowiska (sekrety)
 appsettings.Development.json
 launchSettings.json
+appsettings.json
+
 
 # Konfiguracje IDE
 .vscode/
