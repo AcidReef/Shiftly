@@ -68,52 +68,16 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-var mongoClient = app.Services.GetRequiredService<IMongoClient>();
-// var database = mongoClient.GetDatabase("shiftly");  // Użyj swojej nazwy bazy
-// var collection = database.GetCollection<Shift>("shifts");//
-// var collection = database.GetCollection<User>("Users");
-
-// // Tworzenie testowego użytkownika
-// var testUser = new User
-// {
-//     UserName = "testuser",
-//     Email = "testuser@example.com",
-//     Role = "User",
-//     PasswordHash = "hashedpassword"  
-// };
-
-
-// var shifts = new List<Shift>
-// {
-//     new Shift
-//     {
-//         UserId = "user123",
-//         Start = DateTime.UtcNow.AddHours(-4),
-//         End = DateTime.UtcNow.AddHours(-3),
-//         Note = "Test shift 1"
-//     },
-//     new Shift
-//     {
-//         UserId = "user456",
-//         Start = DateTime.UtcNow.AddHours(1),
-//         End = DateTime.UtcNow.AddHours(2),
-//         Note = "Test shift 2"
-//     },
-//     new Shift
-//     {
-//         UserId = "user789",
-//         Start = DateTime.UtcNow.AddHours(-2),
-//         End = DateTime.UtcNow.AddHours(-1),
-//         Note = "Test shift 3"
-//     }
-// };
+// var mongoClient = app.Services.GetRequiredService<IMongoClient>();
+// // var database = mongoClient.GetDatabase("shiftly"); 
+// // var collection = database.GetCollection<Shift>("shifts");//
 
 // // Asynchroniczne wstawienie testowych danych
 // await collection.InsertManyAsync(shifts);
 // Console.WriteLine("Testowe shiftsy zostały dodane do bazy!");
 
-// Wstawienie testowego użytkownika do bazy
-// await collection.InsertOneAsync(testUser);
+// // Wstawienie testowego użytkownika do bazy
+// await collection.InsertOneAsync(user);
 // Console.WriteLine("Testowy użytkownik został dodany do bazy!");
 
 // === SWAGGER I UI ===
