@@ -4,19 +4,28 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Azure.Storage.Blobs;
 using Azure.Messaging.ServiceBus;
+using MongoDB.Driver;
 using System.Text;
+using Shiftly.Models;
+
+using System.Threading.Tasks;
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 // === KONFIGURACJA MONGODB ===
 builder.Services.Configure<Shiftly.Data.MongoDbSettings>(
     builder.Configuration.GetSection("MongoDb"));
 builder.Services.AddSingleton<Shiftly.Data.MongoDbContext>();
 
+// Tworzenie połączenia z MongoDB i kolekcją
+builder.Services.AddSingleton<IMongoClient>(sp =>
+{
+    var settings = builder.Configuration.GetSection("MongoDb").Get<Shiftly.Data.MongoDbSettings>()!;
+    return new MongoClient(settings.ConnectionString);
+});
+
 // === REPOZYTORIA I SERWISY ===
 builder.Services.Configure<ServiceBusSettings>(builder.Configuration.GetSection("ServiceBus"));
-
 builder.Services.AddSingleton<NotificationService>();
 builder.Services.AddSingleton(sp => new BlobServiceClient(builder.Configuration.GetValue<string>("AzureStorage:ConnectionString")));
 builder.Services.AddSingleton(sp => new ServiceBusClient(builder.Configuration.GetValue<string>("ServiceBus:ConnectionString")));
@@ -59,20 +68,67 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+var mongoClient = app.Services.GetRequiredService<IMongoClient>();
+// var database = mongoClient.GetDatabase("shiftly");  // Użyj swojej nazwy bazy
+// var collection = database.GetCollection<Shift>("shifts");//
+// var collection = database.GetCollection<User>("Users");
 
+// // Tworzenie testowego użytkownika
+// var testUser = new User
+// {
+//     UserName = "testuser",
+//     Email = "testuser@example.com",
+//     Role = "User",
+//     PasswordHash = "hashedpassword"  
+// };
+
+
+// var shifts = new List<Shift>
+// {
+//     new Shift
+//     {
+//         UserId = "user123",
+//         Start = DateTime.UtcNow.AddHours(-4),
+//         End = DateTime.UtcNow.AddHours(-3),
+//         Note = "Test shift 1"
+//     },
+//     new Shift
+//     {
+//         UserId = "user456",
+//         Start = DateTime.UtcNow.AddHours(1),
+//         End = DateTime.UtcNow.AddHours(2),
+//         Note = "Test shift 2"
+//     },
+//     new Shift
+//     {
+//         UserId = "user789",
+//         Start = DateTime.UtcNow.AddHours(-2),
+//         End = DateTime.UtcNow.AddHours(-1),
+//         Note = "Test shift 3"
+//     }
+// };
+
+// // Asynchroniczne wstawienie testowych danych
+// await collection.InsertManyAsync(shifts);
+// Console.WriteLine("Testowe shiftsy zostały dodane do bazy!");
+
+// Wstawienie testowego użytkownika do bazy
+// await collection.InsertOneAsync(testUser);
+// Console.WriteLine("Testowy użytkownik został dodany do bazy!");
+
+// === SWAGGER I UI ===
 app.UseSwagger();
 app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-        c.RoutePrefix = string.Empty;  // Swagger dostępny pod głównym adresem
-    });
-
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+    c.RoutePrefix = string.Empty;  // Swagger dostępny pod głównym adresem
+});
 
 app.UseHttpsRedirection();
 
 // === MAPOWANIE KONTROLERÓW I AUTORYZACJA ===
-app.UseAuthentication();
-app.UseAuthorization();
 app.MapControllers();
+
+await app.RunAsync();
 
 app.Run();
