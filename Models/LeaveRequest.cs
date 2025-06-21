@@ -8,10 +8,9 @@ namespace Shiftly.Models
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; } = default!;
-
         public string UserId { get; set; } = default!;
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public DateTime Start { get; set; }
+        public DateTime End { get; set; }
         public string Status { get; set; } = "Pending"; // "Pending", "Approved", "Rejected"
         public string? Reason { get; set; }
         public DateTime SubmittedAt { get; set; } = DateTime.UtcNow;

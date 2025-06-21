@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shiftly.Models;
 using Shiftly.Repositories;
@@ -18,10 +19,13 @@ namespace Shiftly.Controllers
             _repo = repo;
         }
 
+        // Dostęp dla zalogowanych (wszyscy użytkownicy)
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAll()
             => Ok(await _repo.GetAllAsync());
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(string id)
         {
@@ -29,10 +33,11 @@ namespace Shiftly.Controllers
             return shift is null ? NotFound() : Ok(shift);
         }
 
+        // Dostęp tylko dla menedżerów
+        [Authorize(Roles = "Manager")]
         [HttpPost]
         public async Task<IActionResult> Create(Shift shift)
         {
-            // Przykładowa logika biznesowa: walidacja dostępności usera
             if (!await _shiftService.IsUserAvailable(shift.UserId, shift.Start, shift.End))
                 return BadRequest("User already has a shift at this time!");
 
@@ -40,6 +45,7 @@ namespace Shiftly.Controllers
             return CreatedAtAction(nameof(GetById), new { id = shift.Id }, shift);
         }
 
+        [Authorize(Roles = "Manager")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(string id, Shift shift)
         {
@@ -47,6 +53,7 @@ namespace Shiftly.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "Manager")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {

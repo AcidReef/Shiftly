@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shiftly.Models;
 using Shiftly.Repositories;
 using Shiftly.Services;
+using Shiftly.DTOs;
 
-namespace Shiftly.Controllers
+namespace Shiftly.Controllerss
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -13,10 +15,12 @@ namespace Shiftly.Controllers
 
         public LeaveRequestController(LeaveRequestService svc) => _svc = svc;
 
+        [Authorize] // Użytkownik musi być zalogowany, żeby zobaczyć swoje zgłoszenia
         [HttpGet]
         public async Task<IActionResult> GetAll() =>
             Ok(await _svc.GetAllAsync());
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(string id)
         {
@@ -24,13 +28,32 @@ namespace Shiftly.Controllers
             return lr is null ? NotFound() : Ok(lr);
         }
 
+        [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Create(LeaveRequest leaveRequest)
+        public async Task<IActionResult> Create(LeaveRequestCreateDto dto)
         {
+            if (dto.Start > dto.End)
+                return BadRequest("Data zakończenia nie może być przed datą rozpoczęcia.");
+
+            // Ew: Czy UserId zgadza się z zalogowanym użytkownikiem
+            // var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            // if (userId != dto.UserId) return Forbid();
+
+            var leaveRequest = new LeaveRequest
+            {
+                UserId = dto.UserId,
+                Start = dto.Start,
+                End = dto.End,
+                Reason = dto.Reason,
+                Status = "Pending",
+                SubmittedAt = DateTime.UtcNow
+            };
+
             var created = await _svc.CreateAsync(leaveRequest);
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
 
+        [Authorize] // Edycja tylko po zalogowaniu
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(string id, LeaveRequest leaveRequest)
         {
@@ -38,6 +61,7 @@ namespace Shiftly.Controllers
             return updated is null ? NotFound() : NoContent();
         }
 
+        [Authorize] // Usuwanie tylko po zalogowaniu
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
@@ -45,6 +69,8 @@ namespace Shiftly.Controllers
             return deleted ? NoContent() : NotFound();
         }
 
+        // === TE ENDPOINTY TYLKO DLA MANAGERÓW ===
+        [Authorize(Roles = "Manager")]
         [HttpPost("{id}/approve")]
         public async Task<IActionResult> Approve(string id)
         {
@@ -52,6 +78,7 @@ namespace Shiftly.Controllers
             return lr is null ? NotFound() : Ok(lr);
         }
 
+        [Authorize(Roles = "Manager")]
         [HttpPost("{id}/reject")]
         public async Task<IActionResult> Reject(string id)
         {
@@ -60,71 +87,3 @@ namespace Shiftly.Controllers
         }
     }
 }
-// namespace Shiftly.Controllers
-// {
-//     [ApiController]
-//     [Route("api/[controller]")]
-//     public class LeaveRequestController : ControllerBase
-//     {
-//         private readonly LeaveRequestRepository _repo;
-
-//         public LeaveRequestController(LeaveRequestRepository repo) => _repo = repo;
-
-//         [HttpGet]
-//         public async Task<IActionResult> GetAll() =>
-//             Ok(await _repo.GetAllAsync());
-
-//         [HttpGet("{id}")]
-//         public async Task<IActionResult> GetById(string id)
-//         {
-//             var lr = await _repo.GetByIdAsync(id);
-//             return lr is null ? NotFound() : Ok(lr);
-//         }
-
-//         [HttpPost]
-//         public async Task<IActionResult> Create(LeaveRequest leaveRequest)
-//         {
-//             leaveRequest.Status = "Pending";
-//             leaveRequest.SubmittedAt = DateTime.UtcNow;
-
-//             await _repo.CreateAsync(leaveRequest);
-//             return CreatedAtAction(nameof(GetById), new { id = leaveRequest.Id }, leaveRequest);
-//         }
-
-//         [HttpPut("{id}")]
-//         public async Task<IActionResult> Update(string id, LeaveRequest leaveRequest)
-//         {
-//             await _repo.UpdateAsync(id, leaveRequest);
-//             return NoContent();
-//         }
-
-//         [HttpDelete("{id}")]
-//         public async Task<IActionResult> Delete(string id)
-//         {
-//             await _repo.DeleteAsync(id);
-//             return NoContent();
-//         }
-
-//         [HttpPost("{id}/approve")]
-//         public async Task<IActionResult> Approve(string id)
-//         {
-//             var leave = await _repo.GetByIdAsync(id);
-//             if (leave is null) return NotFound();
-
-//             leave.Status = "Approved";
-//             await _repo.UpdateAsync(id, leave);
-//             return Ok(leave);
-//         }
-
-//         [HttpPost("{id}/reject")]
-//         public async Task<IActionResult> Reject(string id)
-//         {
-//             var leave = await _repo.GetByIdAsync(id);
-//             if (leave is null) return NotFound();
-
-//             leave.Status = "Rejected";
-//             await _repo.UpdateAsync(id, leave);
-//             return Ok(leave);
-//         }
-//     }
-// }
